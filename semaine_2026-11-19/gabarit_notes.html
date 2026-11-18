@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UNEAR notes slide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=block" rel="stylesheet">
+<style>
+  /* Test format: plain "phone note" look, no photo. One idea per slide. */
+  :root { --ink:#1c1712; --paper:#fbf6ea; --line:#e9e0cb; --accent:#d9a31a; --muted:#8a7f6c; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { width:1080px; height:1350px; overflow:hidden; background:var(--paper); font-family:'Poppins', 'Segoe UI', sans-serif; }
+  #slide { position:relative; width:1080px; height:1350px; overflow:hidden; background:var(--paper); }
+  .bar { position:absolute; top:0; left:0; right:0; height:150px; display:flex; align-items:center; justify-content:space-between; padding:40px 70px 0; color:var(--accent); font-weight:600; font-size:38px; }
+  .bar .back { display:flex; align-items:center; gap:10px; }
+  .bar .back svg { width:30px; height:44px; }
+  .bar .count { color:var(--muted); font-size:32px; font-weight:500; }
+  .date { position:absolute; top:170px; left:0; right:0; text-align:center; color:var(--muted); font-size:28px; font-weight:500; }
+  .text { position:absolute; left:90px; right:90px; top:300px; font-weight:600; font-size:68px; line-height:1.18; letter-spacing:-1.5px; color:var(--ink); white-space:pre-line; }
+  .text.title { font-weight:800; font-size:92px; line-height:1.04; letter-spacing:-3px; top:380px; }
+  .small { margin-top:34px; font-size:40px; font-weight:500; color:var(--muted); letter-spacing:-0.5px; }
+  .foot { position:absolute; left:90px; right:90px; bottom:80px; display:flex; align-items:center; justify-content:space-between; border-top:3px solid var(--line); padding-top:36px; color:var(--muted); font-size:30px; font-weight:600; }
+  .foot img { width:64px; height:64px; border-radius:16px; vertical-align:middle; margin-right:16px; }
+  .foot .swipe { color:var(--accent); font-size:34px; font-weight:700; }
+  .cta .text { top:360px; }
+  .cta .link { margin-top:60px; display:inline-block; padding:22px 40px; border-radius:999px; background:var(--accent); color:#fff; font-size:44px; font-weight:800; letter-spacing:-0.5px; }
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script src="slides_notes.js"></script>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search);
+  var post = NOTES[q.get('p')];
+  var n = parseInt(q.get('s'), 10);
+  var total = post.slides.length;
+  var s = post.slides[n - 1];
+  var esc = function (t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); };
+  var back = '<svg viewBox="0 0 30 44"><path d="M24 4 L6 22 L24 40" stroke="currentColor" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var html = '<div class="bar"><span class="back">' + back + 'notes</span><span class="count">' + n + ' / ' + total + '</span></div>' +
+    '<div class="date">' + esc(post.date) + '</div>';
+  if (s.cta) {
+    html += '<div class="cta"><div class="text">' + esc(s.texte) + '<br><span class="link">' + esc(s.lien) + '</span></div></div>';
+  } else {
+    html += '<div class="text' + (n === 1 ? ' title' : '') + '">' + esc(s.texte) + (s.petit ? '<div class="small">' + esc(s.petit) + '</div>' : '') + '</div>';
+  }
+  html += '<div class="foot"><span><img src="assets/logo.png">@unear.app</span>' + (n < total ? '<span class="swipe">swipe &rsaquo;</span>' : '') + '</div>';
+  document.getElementById('slide').innerHTML = html;
+})();
+</script>
+</body>
+</html>
