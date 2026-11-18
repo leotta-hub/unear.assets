@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UNEAR slide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=block" rel="stylesheet">
+<style>
+  :root { --ink:#1f1030; --yellow:#FFD84D; --pink:#FFB3C9; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { width:1080px; height:1350px; overflow:hidden; background:#3a2a30; font-family:'Poppins', 'Segoe UI', sans-serif; }
+  #slide { position:relative; width:1080px; height:1350px; overflow:hidden; }
+  .bg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .bg.blur { filter:blur(38px) brightness(.5) saturate(1.1); transform:scale(1.2); }
+  .pill { display:inline-flex; align-items:center; gap:14px; padding:16px 30px; border-radius:999px; font-weight:700; font-size:30px; color:var(--ink); background:rgba(255,255,255,.88); white-space:nowrap; }
+  .pill.pink { background:var(--pink); }
+  .pill.glass { background:rgba(255,255,255,.55); backdrop-filter:blur(18px); border:2px solid rgba(255,255,255,.6); }
+  .brand { position:absolute; top:58px; left:58px; font-size:34px; font-weight:800; letter-spacing:.5px; padding:12px 30px 12px 12px; }
+  .brand img { width:60px; height:60px; border-radius:16px; }
+  .count { position:absolute; top:62px; right:58px; }
+  .card { position:absolute; left:56px; right:56px; bottom:56px; padding:46px 48px 44px; border-radius:48px; background:rgba(255,255,255,.38); backdrop-filter:blur(30px) saturate(1.2); border:2px solid rgba(255,255,255,.55); }
+  .pills { display:flex; gap:16px; margin-bottom:30px; flex-wrap:wrap; }
+  h1 { font-weight:800; font-size:76px; line-height:1.02; letter-spacing:-2.5px; color:var(--ink); }
+  .bubble { margin-top:34px; font-weight:500; font-size:30px; padding:12px 28px 12px 12px; }
+  .bubble img { width:56px; height:56px; border-radius:14px; }
+  .bubble b { font-weight:700; }
+  .note { position:absolute; font-weight:800; color:var(--yellow); font-size:34px; letter-spacing:-1.2px; line-height:1.05; text-align:center; text-shadow:0 2px 12px rgba(0,0,0,.25); }
+  .note svg { display:block; margin:8px auto 0; filter:drop-shadow(0 2px 6px rgba(0,0,0,.45)); }
+  .note .lbl { display:inline-block; padding:8px 20px 10px; border-radius:22px; background:rgba(31,16,48,.62); }
+  /* inner slides */
+  .inner-title { position:absolute; left:70px; right:70px; top:220px; font-weight:800; font-size:92px; line-height:1.0; letter-spacing:-3px; color:var(--yellow); }
+  .num { position:absolute; left:70px; top:190px; font-weight:800; font-size:300px; line-height:1; letter-spacing:-10px; color:var(--yellow); }
+  .body-card.etape { top:560px; bottom:auto; font-size:60px; }
+  .body-card.titre { top:440px; bottom:auto; font-size:56px; }
+  .body-card.seul { top:50%; bottom:auto; transform:translateY(-50%); font-size:62px; }
+  .body-card { position:absolute; left:56px; right:56px; bottom:180px; padding:56px 56px; border-radius:48px; background:rgba(255,255,255,.8); backdrop-filter:blur(30px); border:2px solid rgba(255,255,255,.6); font-weight:600; font-size:52px; line-height:1.22; letter-spacing:-1px; color:var(--ink); }
+  .swipe { position:absolute; right:70px; bottom:70px; }
+  /* app */
+  .phone { position:absolute; left:50%; transform:translateX(-50%); bottom:0; width:470px; height:700px; overflow:hidden; border-radius:46px 46px 0 0; box-shadow:0 30px 80px rgba(0,0,0,.45); }
+  .phone img { position:absolute; width:1354px; left:-441px; top:-795px; }
+  /* cta */
+  .cta { position:absolute; inset:0; background:linear-gradient(180deg,#6f4b55 0%,#715a4a 60%,#6c5e3f 100%); }
+  .cta .logo { position:absolute; top:136px; left:88px; display:flex; align-items:center; gap:28px; font-weight:800; font-size:56px; color:#fff; letter-spacing:1px; }
+  .cta .logo img { width:108px; height:108px; border-radius:24px; border:3px solid rgba(255,255,255,.8); }
+  .cta h2 { position:absolute; left:80px; right:80px; top:360px; text-align:center; color:#fff; font-weight:800; font-size:66px; line-height:1.08; letter-spacing:-2px; }
+  .cta .dl { position:absolute; left:88px; right:88px; top:920px; padding:46px 30px 44px; border-radius:48px; background:rgba(255,255,255,.4); border:2px solid rgba(255,255,255,.55); text-align:center; }
+  .cta .dl p { font-weight:800; font-size:44px; letter-spacing:-1.2px; color:var(--ink); margin-bottom:30px; }
+  .cta .dl p u { text-decoration-thickness:4px; text-underline-offset:6px; }
+  .stores { margin:0 auto; width:556px; height:83px; overflow:hidden; position:relative; }
+  .stores img { position:absolute; width:1080px; left:-262px; top:-1048px; }
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script src="slides.js"></script>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search);
+  var post = POSTS[q.get('p')];
+  var n = parseInt(q.get('s'), 10);
+  var total = post.slides.length + 1;
+  var root = document.getElementById('slide');
+  var esc = function (t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); };
+  var arrowRight = '<svg width="290" height="80" viewBox="0 0 290 80"><path d="M6 42 Q120 38 230 40" stroke="#FFD84D" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M222 6 L284 40 L222 74 Z" fill="#FFD84D"/></svg>';
+  var arrowDown = '<svg width="80" height="230" viewBox="0 0 80 230"><path d="M40 6 L40 160" stroke="#FFD84D" stroke-width="12" stroke-linecap="round"/><path d="M6 154 L40 222 L74 154 Z" fill="#FFD84D"/></svg>';
+  var bg = function (blur) {
+    var crop = post.crop ? 'object-view-box:inset(' + post.crop + ');' : '';
+    var pos = post.pos ? 'object-position:' + post.pos + ';' : '';
+    return '<img class="bg' + (blur ? ' blur' : '') + '" style="' + crop + pos + '" src="' + post.photo + '">';
+  };
+  var brand = '<div class="pill glass brand"><img src="assets/logo.png">UNEAR</div>';
+  var counter = function () { return '<div class="pill glass count">' + n + ' / ' + total + '</div>'; };
+  var html = '';
+
+  if (n > post.slides.length) {
+    var c = CTA[post.cta];
+    html = '<div class="cta"><div class="logo"><img src="assets/logo.png">UNEAR</div>' +
+      '<h2>' + esc(c.titre) + '</h2>' +
+      '<div class="note" style="left:560px;top:690px;width:300px;">' + arrowDown.replace('<svg', '<svg style="position:absolute;left:-110px;top:-40px"') + '<span style="display:block;margin-top:40px">' + esc(c.note) + '</span></div>' +
+      '<div class="dl"><p>All download links at <u>unear.app</u></p><div class="stores"><img src="assets/stores.png"></div></div></div>';
+  } else {
+    var s = post.slides[n - 1];
+    if (s.type === 'couverture') {
+      html = bg(false) + brand + (s.compteur ? '<div class="pill count">' + esc(s.compteur) + '</div>' : '') +
+        '<div class="card"><div class="pills"><span class="pill">' + esc(s.pills[0]) + '</span>' + (s.pills[1] ? '<span class="pill pink">' + esc(s.pills[1]) + '</span>' : '') + '</div>' +
+        '<h1 id="t">' + esc(s.titre) + '</h1>' +
+        '<div class="pill bubble"><img src="assets/logo.png"><span>' + s.bulle + '</span></div>' +
+        '<div class="note" style="right:40px;top:-160px;width:340px;"><span class="lbl">' + esc(s.fleche) + '</span>' + arrowRight.replace('width="290"', 'width="250"') + '</div></div>';
+    } else if (s.type === 'app') {
+      html = '<img class="bg blur" src="assets/app_mockup.png">' + brand + counter() +
+        '<div class="inner-title" style="top:190px;font-size:78px;letter-spacing:-2.5px;color:#fff">' + esc(s.titre) + '</div>' +
+        '<div class="pills" style="position:absolute;left:70px;top:470px"><span class="pill pink">' + esc(s.pills[0]) + '</span></div>' +
+        '<div class="phone"><img src="assets/app_mockup.png"></div>' +
+        '<div class="note" style="right:46px;bottom:150px;width:250px;">' + esc(s.fleche) + arrowRight.replace('width="290"', 'width="220"') + '</div>';
+    } else if (s.type === 'etape') {
+      html = bg(true) + brand + counter() +
+        '<div class="num">' + esc(s.numero) + '</div>' +
+        '<div class="body-card etape">' + esc(s.texte) + '</div>' +
+        '<div class="swipe">' + arrowRight.replace('width="290"', 'width="150"') + '</div>';
+    } else {
+      html = bg(true) + brand + counter() +
+        (s.titre ? '<div class="inner-title">' + esc(s.titre) + '</div>' : '') +
+        '<div class="body-card ' + (s.titre ? 'titre' : 'seul') + '">' + esc(s.texte) + '</div>' +
+        '<div class="swipe">' + arrowRight.replace('width="290"', 'width="150"') + '</div>';
+    }
+  }
+  root.innerHTML = html;
+
+  // Cover: shrink the title if the card rises too high (keeps the photo visible).
+  var fit = function () {
+    var t = document.getElementById('t');
+    var card = document.querySelector('.card');
+    if (!t || !card) return;
+    var size = 76;
+    while (card.getBoundingClientRect().top < 520 && size > 52) { size -= 2; t.style.fontSize = size + 'px'; }
+  };
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit); else fit();
+})();
+</script>
+</body>
+</html>
